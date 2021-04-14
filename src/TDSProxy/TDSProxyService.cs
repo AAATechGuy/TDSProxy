@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Net;
-using System.ServiceProcess;
+using TDSProxy.Configuration;
 
 namespace TDSProxy
 {
-    public sealed partial class TDSProxyService
+    public class TDSProxyService : IDisposable
     {
         #region Log4Net
-        static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public static log4net.ILog log { get; set; } = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         #endregion
 
-        public static bool VerboseLogging { get; private set; }
-        public static bool VerboseLoggingInWrapper { get; private set; }
-        public static bool SkipLoginProcessing { get; private set; }
-        public static bool AllowUnencryptedConnections { get; private set; }
-        public static bool BypassIntegratedSecurity { get; private set; } = false;
-        public static bool BypassSSPI { get; private set; } = false;
+        public static bool VerboseLogging { get; set; } = false;
+        public static bool VerboseLoggingInWrapper { get; set; } = false;
+        public static bool SkipLoginProcessing { get; set; } = false;
+        public static bool AllowUnencryptedConnections { get; set; } = false;
+        public static bool BypassIntegratedSecurity { get; set; } = false;
+        public static bool BypassSSPI { get; set; } = false;
 
         private readonly HashSet<TDSListener> _listeners = new HashSet<TDSListener>();
 
@@ -112,6 +112,13 @@ namespace TDSProxy
                 new TDSListener(this, listenerConfig);
         }
 
+        public void StartListeners(IEnumerable<ListenerElement> listeners)
+        {
+            foreach (ListenerElement listenerConfig in listeners)
+                // ReSharper disable once ObjectCreationAsStatement -- constructed object registers itself
+                new TDSListener(this, listenerConfig);
+        }
+
         private void StopListeners()
         {
             List<TDSListener> listeners;
@@ -143,5 +150,7 @@ namespace TDSProxy
             lock (_listeners)
                 _listeners.Remove(listener);
         }
+
+        public void Dispose() => this.Stop();
     }
 }
