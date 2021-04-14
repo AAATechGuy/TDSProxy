@@ -22,6 +22,8 @@ namespace TDSProxy
 
         private readonly HashSet<TDSListener> _listeners = new HashSet<TDSListener>();
 
+        public int ActiveListenerCount => _listeners.Count;
+
         private bool _stopRequested;
 
         private static Configuration.TdsProxySection _configuration;
