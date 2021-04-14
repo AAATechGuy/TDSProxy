@@ -7,6 +7,7 @@
     <Product>TDSProxy.Authentication</Product>
     <Copyright>Copyright © Tech Software LLC 2014-2020</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
